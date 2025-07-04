@@ -1,0 +1,36 @@
+{
+  "$schema": "./package-schema.json",
+  "name": "fs-playground",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter ./apps/fs-app dev",
+    "build:app": "pnpm --filter ./apps/fs-app build",
+    "build:core": "pnpm --filter ./packages/core lib",
+    "build:client": "pnpm --filter ./packages/client lib",
+    "build:server": "pnpm --filter ./packages/server lib",
+    "build:shared": "pnpm --filter ./packages/shared lib",
+    "lint": "eslint . --ext .ts,.tsx,.vue --fix"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "22.0.2",
+    "@types/node": "24.0.10",
+    "@vitejs/plugin-vue": "5.2.3",
+    "@vue/eslint-config-typescript": "14.6.0",
+    "eslint": "9.30.1",
+    "eslint-plugin-vue": "10.0.0",
+    "jiti": "2.4.2",
+    "typescript": "5.5.3",
+    "vite": "5.4.0",
+    "vite-plugin-dts": "4.5.4",
+    "vite-plugin-vue-devtools": "7.7.7",
+    "vue-tsc": "3.0.1"
+  },
+  "dependencies": {
+    "pinia": "3.0.3",
+    "vue": "3.5.17",
+    "vue-i18n": "11.1.9",
+    "vue-router": "4.5.1"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "../../package-schema.json",
+  "name": "@fs/client",
+  "version": "0.0.0",
+  "main": "./src/index.ts",
+  "type": "module",
+  "publishConfig": {
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts"
+  }, 
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@fs/shared": "workspace:*"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "../../package-schema.json",
+  "name": "fs-app",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@fs/shared": "workspace:*",
+    "@fs/core": "workspace:*"
+  }
+}
