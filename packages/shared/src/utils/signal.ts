@@ -18,8 +18,6 @@ import { isFunction, isAsyncFunction, AppLogger } from ".";
  * signal.clear();
  * // Add a one-time listener
  * signal.once((data) => {}, this);
- * // Check if a listener is registered
- * signal.hasListener(listener, this);
  * ```
  */
 export class Signal<T = unknown> {
