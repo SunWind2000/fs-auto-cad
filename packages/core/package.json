@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "main": "./src/index.ts",
   "type": "module",
+  "description": "Core functionality for the WebGL Algorithm Framework",
   "publishConfig": {
     "main": "lib/index.js",
     "types": "lib/index.d.ts"
@@ -11,5 +12,8 @@
   "scripts": {
     "dev": "vite",
     "lib": "vite build"
+  },
+  "devDependencies": {
+    "@fs/shared": "workspace:*"
   }
 }

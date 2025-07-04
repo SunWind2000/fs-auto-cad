@@ -11,6 +11,7 @@
     "build:client": "pnpm --filter ./packages/client lib",
     "build:server": "pnpm --filter ./packages/server lib",
     "build:shared": "pnpm --filter ./packages/shared lib",
+    "test:shared": "pnpm --filter ./packages/shared test",
     "lint": "eslint . --ext .ts,.tsx,.vue --fix"
   },
   "devDependencies": {
@@ -25,6 +26,7 @@
     "vite": "5.4.0",
     "vite-plugin-dts": "4.5.4",
     "vite-plugin-vue-devtools": "7.7.7",
+    "vitest": "3.2.4",
     "vue-tsc": "3.0.1"
   },
   "dependencies": {

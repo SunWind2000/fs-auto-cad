@@ -3,6 +3,7 @@
   "name": "fs-app",
   "version": "0.0.0",
   "type": "module",
+  "description": "Main web application for the WebGL example",
   "scripts": {
     "dev": "vite",
     "build": "vite build"

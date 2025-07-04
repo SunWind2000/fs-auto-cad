@@ -1,6 +1,6 @@
-# FsPlayground
+# FsAutoCAD
 
-Vite5 + TypeScript5 前端技术栈Monorepo项目模板
+Vite5 + TypeScript5 计算机图形学与WebGL研究项目
 
 ## 运行环境
 

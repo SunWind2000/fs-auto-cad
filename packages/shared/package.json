@@ -4,12 +4,14 @@
   "version": "0.0.0",
   "main": "./src/index.ts",
   "type": "module",
+  "description": "Shared utilities and types",
   "publishConfig": {
     "main": "lib/index.js",
     "types": "lib/index.d.ts"
   }, 
   "scripts": {
     "dev": "vite",
-    "lib": "vite build"
+    "lib": "vite build",
+    "test": "vitest run"
   }
 }

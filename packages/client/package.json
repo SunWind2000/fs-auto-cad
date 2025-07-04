@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "main": "./src/index.ts",
   "type": "module",
+  "description": "Client-side functionality framework",
   "publishConfig": {
     "main": "lib/index.js",
     "types": "lib/index.d.ts"
