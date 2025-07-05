@@ -27,9 +27,9 @@
     "vite-env.d.ts",
     "packages/shared/tsconfig.json",
     "packages/core/tsconfig.json",
-    "packages/client/tsconfig.json",
     "packages/server/tsconfig.json",
-    "apps/fs-app/tsconfig.json",
+    "apps/web-app/tsconfig.json",
+    "apps/client-app/tsconfig.json"
   ],
   "exclude": [
     "node_modules",

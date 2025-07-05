@@ -1,6 +1,6 @@
 {
   "$schema": "../../package-schema.json",
-  "name": "fs-app",
+  "name": "fs-web-app",
   "version": "0.0.0",
   "type": "module",
   "description": "Main web application for the WebGL example",

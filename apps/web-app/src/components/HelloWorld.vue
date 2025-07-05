@@ -10,6 +10,13 @@
 import { ref, onMounted } from "vue";
 const msg = ref("Hello, World!");
 const currentTime = ref("");
+
+withDefaults(defineProps<{
+    testProps?: string;
+}>(), {
+    testProps: "Hello, World!"
+});
+
 onMounted(() => {
     const now = new Date();
     currentTime.value = now.toLocaleTimeString();

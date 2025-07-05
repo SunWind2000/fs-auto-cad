@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "rootDir": "../..",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@web-app/*": ["./src/*"],
+    }
+  },
+  "include": [
+    "src/**/*",
+    "src/**/*.vue"
+  ]
+}

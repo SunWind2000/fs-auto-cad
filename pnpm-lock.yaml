@@ -55,13 +55,22 @@ importers:
         specifier: 7.7.7
         version: 7.7.7(rollup@4.44.1)(vite@5.4.0(@types/node@24.0.10))(vue@3.5.17(typescript@5.5.3))
       vitest:
-        specifier: ^3.2.4
+        specifier: 3.2.4
         version: 3.2.4(@types/node@24.0.10)
       vue-tsc:
         specifier: 3.0.1
         version: 3.0.1(typescript@5.5.3)
 
-  apps/fs-app:
+  apps/client-app:
+    devDependencies:
+      '@fs/server':
+        specifier: workspace:*
+        version: link:../../packages/server
+      '@fs/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+
+  apps/web-app:
     devDependencies:
       '@fs/core':
         specifier: workspace:*
@@ -69,12 +78,6 @@ importers:
       '@fs/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-
-  packages/client:
-    devDependencies:
-      '@fs/shared':
-        specifier: workspace:*
-        version: link:../shared
 
   packages/core:
     devDependencies:

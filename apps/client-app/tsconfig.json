@@ -1,16 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "lib",
+    "rootDir": "../..",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
+      "@client-app/*": ["./src/*"]
     }
   },
-  "include": [
-    "../../vite-env.d.ts",
-    "src/**/*",
-    "src/**/*.vue"
-  ]
+  "include": ["src"]
 }
