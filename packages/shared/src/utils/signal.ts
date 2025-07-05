@@ -9,12 +9,14 @@ import { isFunction, isAsyncFunction, AppLogger } from ".";
  * const signal = new Signal<{ key: string }>();
  * 
  * // Add a listener
- * signal.on((data) => {}, this);
+ * const listener = signal.on((data) => {}, this);
  * // Dispatch an event
  * signal.dispatch({ key: 'value' });
  * // Remove a listener
- * signal.off(listener, this);
- * // Clear all _listeners
+ * signal.off(listener);
+ * // Or remove a listener by passing the listener function directly
+ * listener.off();
+ * // Clear all listeners
  * signal.clear();
  * // Add a one-time listener
  * signal.once((data) => {}, this);
@@ -39,7 +41,7 @@ export class Signal<T = unknown> {
      * @param context Optional context to bind the listener.
      * @return A SignalListener instance that can be used to remove the listener later.
      */
-    public on(listener: IListener<T>, context?: unknown)  {
+    public on(listener: IListenerExecutor<T>, context?: unknown)  {
         if (!isFunction(listener) && !isAsyncFunction(listener)) {
             AppLogger.error("Signal", "Listener must be a function or an async function.");
         }
@@ -84,7 +86,7 @@ export class Signal<T = unknown> {
      * @param listener The listener function to add.
      * @param context Optional context to bind the listener.
      */
-    public once(listener: IListener<T>, context?: unknown): void {
+    public once(listener: IListenerExecutor<T>, context?: unknown): void {
         if (!isFunction(listener) && !isAsyncFunction(listener)) {
             AppLogger.error("Signal", "Listener must be a function or an async function.");
         }
@@ -121,11 +123,11 @@ export class Signal<T = unknown> {
 
 export class SignalListener<T> {
 
-    private _listener: IListener<T>;
+    private _listener: IListenerExecutor<T>;
     private _signal: Signal<T> | null;
     private _target: unknown;
 
-    constructor(listener: IListener<T>, signal: Signal<T>, target?: unknown) {
+    constructor(listener: IListenerExecutor<T>, signal: Signal<T>, target?: unknown) {
         this._listener = listener;
         this._signal = signal;
         this._target = target;
@@ -145,4 +147,4 @@ export class SignalListener<T> {
 }
 
 
-export type IListener<T> = (data: T) => unknown;
+export type IListenerExecutor<T> = (data: T) => unknown;

@@ -79,7 +79,6 @@ describe("Signal", () => {
             }
 
             public updateValue(data: number): void {
-                console.log("updateValue", this);
                 this.value = data;
             }
 

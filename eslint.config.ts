@@ -9,7 +9,7 @@ import pluginVue from "eslint-plugin-vue";
 
 export default defineConfigWithVueTs(
 
-    globalIgnores(["**/dist/**", "**/dist-ssr/**", "**/coverage/**"]),
+    globalIgnores(["**/dist/**", "**/dist-ssr/**", "**/coverage/**", "**/node_modules/**", "**/lib/**"]),
 
     pluginVue.configs["flat/essential"],
     vueTsConfigs.recommended,

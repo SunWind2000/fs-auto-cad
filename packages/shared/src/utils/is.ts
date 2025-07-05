@@ -1,3 +1,5 @@
+import { IAsyncFunction, IFunction } from "../types";
+
 /**
  * @description Checks if the given value is a string.
  * @param value The value to check.
@@ -57,7 +59,7 @@ export const isArray = <T = unknown>(value: unknown): value is T[] => {
  * @param value The value to check.
  * @returns True if the value is a function, false otherwise.
  */
-export const isFunction = (value: unknown): value is ((...args: unknown[]) => unknown) => {
+export const isFunction = (value: unknown): value is IFunction => {
     return typeof value === "function" || value instanceof Function;
 };
 
@@ -66,7 +68,7 @@ export const isFunction = (value: unknown): value is ((...args: unknown[]) => un
  * @param value The value to check.
  * @returns True if the value is a symbol, false otherwise.
  */
-export const isAsyncFunction = (value: unknown): value is (...args: unknown[]) => Promise<unknown> => {
+export const isAsyncFunction = (value: unknown): value is IAsyncFunction => {
     return Object.prototype.toString.call(value) === "[object AsyncFunction]";
 };
 

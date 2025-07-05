@@ -63,4 +63,20 @@ describe("Singleton", () => {
         expect(derivedInstance1).toBe(derivedInstance2);
         expect(derivedInstance1).toBe(baseInstance1); // Derived class should be the same as base class
     });
+
+    // 直接调用
+    it("should allow direct calls", () => {
+        class TestClass {
+            public value: number;
+
+            constructor(value: number) {
+                this.value = value;
+            }
+        }
+
+        const SingletonTestClass = Singleton(TestClass);
+        const instance1 = new SingletonTestClass(10);
+        const instance2 = new SingletonTestClass(20); // Should not create a new instance
+        expect(instance1).toBe(instance2);
+    });
 });
