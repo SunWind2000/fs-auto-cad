@@ -73,3 +73,12 @@ pnpm --filter ./packages/pkg-name build
 
 每添加一个子包，需要注意在根目录的tsconfig.base.json中的`include`中添加一个项目
 
+### Electron安装
+
+推荐使用官方脚手架工具`electron-vite`
+
+```bash
+# 使用官方脚手架快速初始化
+npm create @quick-start/electron@latest
+```
+

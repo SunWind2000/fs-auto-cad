@@ -8,8 +8,13 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@client-app/*": ["./src/*"]
+      "@client-app/*": ["./src/*"],
+      "@client-app-resources/*": ["./resources/*"],
     }
   },
-  "include": ["src"]
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "resources/*"
+  ]
 }
