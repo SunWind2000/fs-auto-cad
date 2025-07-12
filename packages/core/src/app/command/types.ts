@@ -23,3 +23,26 @@ export interface ICommand {
   /** 取消一个命令 */
   cancel: () => void;
 }
+
+/**
+ * 日志等级
+ */
+export enum LogLevel {
+  DEBUG = "DEBUG",
+  INFO = "INFO",
+  WARN = "WARN",
+  ERROR = "ERROR",
+  FATAL = "FATAL"
+}
+
+/**
+ * 日志记录
+ */
+export type ILogRecord = {
+  /** 日志等级 */
+  level: LogLevel;
+  /** 日志消息 */
+  message: string;
+  /** 时间戳 */
+  timestamp: string;
+}

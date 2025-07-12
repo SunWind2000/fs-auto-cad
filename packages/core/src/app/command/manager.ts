@@ -1,6 +1,7 @@
 import { isFunction, isAsyncFunction, AppLogger, Signal } from "@fs/shared";
 import { Command, ICommandCtor } from "./command";
-import { Stack } from "./utils";
+import { CommandHistory } from "./command_history";
+import { LogLevel } from "./types";
 
 export class CommandManager {
     private static _instance: CommandManager | null = null;
@@ -14,10 +15,8 @@ export class CommandManager {
 
     private _commands: Map<string, ICommandCtor> = new Map();
     private _current: Command | null = null;
-    /** 撤销栈 */
-    private _undoStack: Stack<Command> = new Stack();
-    /** 重做栈 */
-    private _redoStack: Stack<Command> = new Stack();
+
+    private _history: CommandHistory = new CommandHistory(100);
 
     /** 命令开始事件 */
     public signalCmdStarted: Signal<Command> = new Signal();
@@ -44,14 +43,14 @@ export class CommandManager {
      * 是否可以撤销
      */
     public get canUndo(): boolean {
-        return this._undoStack.length > 0;
+        return this._history.canUndo;
     }
 
     /**
      * 是否可以重做
      */
     public get canRedo(): boolean {
-        return this._redoStack.length > 0;
+        return this._history.canRedo;
     }
 
     /**
@@ -84,27 +83,19 @@ export class CommandManager {
 
         const cmd = new commandCtor();
 
-        // 新增命令到撤销栈
-        this._undoStack.push(cmd);
-        // 清空重做栈
-        this._redoStack.clear();
         // 设置当前命令
         this._current = cmd;
 
         this.signalCmdStarted.dispatch(this._current);
 
-        if (isAsyncFunction(this._current.onExecute)) {
-            (this._current.onExecute(...args) as Promise<void>).then(() => {
-                if (this._current?.autoComplete) {
-                    this._current.commit();
-                }
+        if (isAsyncFunction(cmd.onExecute)) {
+            (cmd.onExecute(...args) as Promise<void>).then(() => {
+                this._postProcess(cmd);
             });
         } else {
-            this._current.onExecute(...args);
+            cmd.onExecute(...args);
 
-            if (this._current?.autoComplete) {
-                this._current.commit();
-            }
+            this._postProcess(cmd);
         }
     }
 
@@ -174,35 +165,26 @@ export class CommandManager {
     }
 
     /**
+     * 写入日志
+     * @param level 日志级别
+     * @param message 日志消息
+     */
+    public writeLog(level: LogLevel, message: string): void {
+        this._history.writeLog(level, message);
+    }
+
+    /**
      * 撤销上一个命令
      */
     public undo(): void {
-        const cmd = this._undoStack.pop();
-
-        if (!cmd) {
-            AppLogger.warn(`CommandManager`, `No command to undo.`);
-
-            return;
-        }
-
-        cmd.onUndo?.();
-        this._redoStack.push(cmd); // 将撤销的命令放入重做栈
+        this._history.undo();
     }
 
     /**
      * 重做上一个撤销的命令
      */
     public redo(): void {
-        const cmd = this._redoStack.pop();
-
-        if (!cmd) {
-            AppLogger.warn(`CommandManager`, `No command to redo.`);
-
-            return;
-        }
-
-        this.execute(cmd.name, ...cmd.args); // 重新执行命令
-        this._undoStack.push(cmd); // 将重做的命令放入撤销栈
+        this._history.redo();
     }
 
     /**
@@ -210,11 +192,22 @@ export class CommandManager {
      */
     public dispose(): void {
         this._commands.clear();
+        this._history.clear();
         this._current = null;
         this.signalCmdStarted.clear();
         this.signalCmdTerminated.clear();
-        this._undoStack.clear();
-        this._redoStack.clear();
         AppLogger.log(`CommandManager`, `All commands have been cleaned up.`);
+    }
+
+    /**
+     * 命令执行结束后的后处理方法
+     */
+    private _postProcess(cmd: Command): void {
+        if (cmd.autoComplete) {
+            cmd.commit();
+        }
+
+        // 记录命令到历史
+        this._history.record(cmd);
     }
 }
