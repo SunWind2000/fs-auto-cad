@@ -62,4 +62,24 @@ describe("Command Manager Tests", () => {
 
         mgr.execute("testCommand");
     });
+
+    it("should filter logs by level", () => {
+        const mgr = new FSApp.Command.CommandManager();
+        mgr.setLogLevel(FSApp.Command.LogLevelEnum.SIMPLE);
+        mgr.register("testCommand", class extends FSApp.Command.Command {
+            onExecute() {
+                this._mgr?.writeLog(FSApp.Command.LogTypeEnum.WARN, "Test command executed");
+            }
+        });
+
+        mgr.execute("testCommand");
+        const logs = mgr.readLog();
+        expect(logs.length).toBe(0); // SIMPLE level should not include WARN logs
+        mgr.setLogLevel(FSApp.Command.LogLevelEnum.NORMAL);
+        const logsNormal = mgr.readLog();
+        expect(logsNormal.length).toBe(1); // NORMAL level should include WARN logs
+        mgr.setLogLevel(FSApp.Command.LogLevelEnum.DETAILED);
+        const logsDetailed = mgr.readLog();
+        expect(logsDetailed.length).toBeGreaterThan(1); // DETAILED level should also include WARN logs
+    });
 });

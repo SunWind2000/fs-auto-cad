@@ -1,7 +1,7 @@
 import { isFunction, isAsyncFunction, AppLogger, Signal } from "@fs/shared";
 import { Command, ICommandCtor } from "./command";
 import { CommandHistory } from "./command_history";
-import { LogLevel, ILogRecord } from "./types";
+import { LogTypeEnum, LogLevelEnum, ILogRecord } from "./types";
 
 export class CommandManager {
     private static _instance: CommandManager | null = null;
@@ -177,7 +177,7 @@ export class CommandManager {
      * @param level 日志级别
      * @param message 日志消息
      */
-    public writeLog(level: LogLevel, message: string): void {
+    public writeLog(level: LogTypeEnum, message: string): void {
         this._history.writeLog(level, message);
     }
 
@@ -186,6 +186,13 @@ export class CommandManager {
      */
     public readLog(): ILogRecord[] {
         return this._history.logList;
+    }
+
+    /**
+     * 设置日志等级
+     */
+    public setLogLevel(level: LogLevelEnum): void {
+        this._history.setLogLevel(level);
     }
 
     /**

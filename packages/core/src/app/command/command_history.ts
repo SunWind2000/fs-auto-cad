@@ -1,7 +1,7 @@
 import { AppLogger, isAsyncFunction } from "@fs/shared";
 import { Command } from "./command";
 import { Stack } from "./utils";
-import { ILogRecord, LogLevel } from "./types";
+import { ILogRecord, LogLevelEnum, LogTypeEnum } from "./types";
 
 export type ICmdLogFormatter = (name: string, args: unknown[]) => string;
 
@@ -33,12 +33,14 @@ export type ICmdHistoryOptions = {
 
 export class CommandHistory {
     private _logList: ILogRecord[] = [];
-    private _undoStack: Stack<Command>;
-    private _redoStack: Stack<Command>;
+    private _logLevel: LogLevelEnum = LogLevelEnum.NORMAL;
     private _logFormatter: ICmdLogFormatter;
     private _undoLogFormatter: ICmdLogFormatter;
     private _redoLogFormatter: ICmdLogFormatter;
 
+    private _undoStack: Stack<Command>;
+    private _redoStack: Stack<Command>;
+    
     constructor(options: ICmdHistoryOptions = {}) {
         this._undoStack = new Stack<Command>(options.stackLimit ?? 100);
         this._redoStack = new Stack<Command>(options.stackLimit ?? 100);
@@ -49,7 +51,9 @@ export class CommandHistory {
 
     /** 获取日志列表 */
     public get logList(): ILogRecord[] {
-        return this._logList;
+        return this._logList.filter(log => {
+            return log.type & this._logLevel;
+        });
     }
 
     /** 是否可以撤销 */
@@ -67,12 +71,12 @@ export class CommandHistory {
      * @param cmd 执行的命令
      * @param level 日志级别
      */
-    public record(cmd: Command, level: LogLevel = LogLevel.INFO): void {
+    public record(cmd: Command, type: LogTypeEnum = LogTypeEnum.INFO): void {
         this._undoStack.push(cmd);
         this._redoStack.clear();
 
         const log: ILogRecord = {
-            level,
+            type,
             message: this._logFormatter(cmd.name, cmd.args),
             timestamp: new Date().toLocaleString()
         };
@@ -95,7 +99,7 @@ export class CommandHistory {
             // 将命令推入重做栈
             this._redoStack.push(cmd);
             this._logList.push({
-                level: LogLevel.INFO,
+                type: LogTypeEnum.INFO,
                 message: this._undoLogFormatter(cmd.name, cmd.args),
                 timestamp: new Date().toLocaleString()
             });
@@ -127,7 +131,7 @@ export class CommandHistory {
             // 将命令推入撤销栈
             this._undoStack.push(cmd);
             this._logList.push({
-                level: LogLevel.INFO,
+                type: LogTypeEnum.INFO,
                 message: this._redoLogFormatter(cmd.name, cmd.args),
                 timestamp: new Date().toLocaleString()
             });
@@ -148,13 +152,20 @@ export class CommandHistory {
      * @param level 日志级别
      * @param message 日志消息
      */
-    public writeLog(level: LogLevel, message: string): void {
+    public writeLog(type: LogTypeEnum, message: string): void {
         const log: ILogRecord = {
-            level,
+            type,
             message,
             timestamp: new Date().toLocaleString()
         };
         this._logList.push(log);
+    }
+
+    /**
+     * 设置日志筛选级别
+     */
+    public setLogLevel(level: LogLevelEnum): void {
+        this._logLevel = level;
     }
 
     /**
