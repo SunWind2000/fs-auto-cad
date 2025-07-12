@@ -1,0 +1,24 @@
+{
+  "$schema": "../../package-schema.json",
+  "name": "@fs/ui",
+  "version": "0.0.0",
+  "main": "./src/index.ts",
+  "type": "module",
+  "description": "UI utilities and types",
+  "publishConfig": {
+    "main": "lib/index.js",
+    "types": "lib/src/index.d.ts",
+    "files": [
+      "lib",
+      "package.json"
+    ]
+  },
+  "scripts": {
+    "dev": "vite",
+    "lib": "vite build",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@fs/shared": "workspace:*"
+  }
+}

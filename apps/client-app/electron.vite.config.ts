@@ -1,5 +1,6 @@
 import { defineConfig, externalizeDepsPlugin } from "electron-vite";
 import { fileURLToPath } from "url";
+import tailwindcss from "@tailwindcss/vite";
 
 const alias = {
     "@client-app": fileURLToPath(new URL("./src", import.meta.url)),
@@ -20,6 +21,9 @@ export default defineConfig({
         }
     },
     renderer: {
+        plugins: [
+            tailwindcss()
+        ],
         resolve: {
             alias
         }

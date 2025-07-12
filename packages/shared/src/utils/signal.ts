@@ -83,7 +83,7 @@ export class Signal<T = unknown> {
     /**
      * Adds a one-time listener to the signal.
      * The listener will be removed after it is called once.
-     * @param listener The listener function to add.
+     * @param listener The listener function to add. If it returns `false`, it will not be removed. Otherwise, it will be removed after execution.
      * @param context Optional context to bind the listener.
      */
     public once(listener: IListenerExecutor<T>, context?: unknown): void {

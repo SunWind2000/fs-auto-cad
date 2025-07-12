@@ -1,7 +1,5 @@
-const t = () => {
-    console.log("This is a shared function from the shared package.");
+import * as FSApp from "./app";
 
-    return "Hello from shared package 1112!";
+export {
+    FSApp
 };
-
-export { t };
