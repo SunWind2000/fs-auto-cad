@@ -5,7 +5,7 @@ import { ILogRecord, LogLevelEnum, LogTypeEnum } from "./types";
 
 export type ICmdLogFormatter = (name: string, args: unknown[]) => string;
 
-export type ICmdHistoryOptions = {
+export type ITransactionManagerOptions = {
     /** 撤销重做栈的最大次数限制 */
     stackLimit?: number;
     /** 
@@ -31,7 +31,10 @@ export type ICmdHistoryOptions = {
     redoLogFormatter?: ICmdLogFormatter;
 }
 
-export class CommandHistory {
+/**
+ * 事务管理器，用于管理命令的撤销和重做,并记录命令执行日志
+ */
+export class TransactionManager {
     private _logList: ILogRecord[] = [];
     private _logLevel: LogLevelEnum = LogLevelEnum.NORMAL;
     private _logFormatter: ICmdLogFormatter;
@@ -41,7 +44,7 @@ export class CommandHistory {
     private _undoStack: Stack<Command>;
     private _redoStack: Stack<Command>;
     
-    constructor(options: ICmdHistoryOptions = {}) {
+    constructor(options: ITransactionManagerOptions) {
         this._undoStack = new Stack<Command>(options.stackLimit ?? 100);
         this._redoStack = new Stack<Command>(options.stackLimit ?? 100);
         this._logFormatter = options.logFormatter || ((name, args) => `Executed command: <${name}> with args: ${JSON.stringify(args)}`);
@@ -78,13 +81,14 @@ export class CommandHistory {
         const log: ILogRecord = {
             type,
             message: this._logFormatter(cmd.name, cmd.args),
+            scope: cmd.name,
             timestamp: new Date().toLocaleString()
         };
         this._logList.push(log);
     }
 
     /**
-     * 撤销一个命令
+     * 撤销上一个命令
      */
     public undo() {
         if (!this.canUndo) {
@@ -101,16 +105,17 @@ export class CommandHistory {
             this._logList.push({
                 type: LogTypeEnum.INFO,
                 message: this._undoLogFormatter(cmd.name, cmd.args),
+                scope: cmd.name,
                 timestamp: new Date().toLocaleString()
             });
         };
 
-        if (isAsyncFunction(cmd.onUndo)) {
-            (cmd.onUndo() as Promise<void>).then(() => {
+        if (isAsyncFunction(cmd.onInverse)) {
+            (cmd.onInverse() as Promise<void>).then(() => {
                 onExecuteUndoDone();
             });
         } else {
-            cmd.onUndo();
+            cmd.onInverse();
             onExecuteUndoDone();
         }
     }
@@ -133,6 +138,7 @@ export class CommandHistory {
             this._logList.push({
                 type: LogTypeEnum.INFO,
                 message: this._redoLogFormatter(cmd.name, cmd.args),
+                scope: cmd.name,
                 timestamp: new Date().toLocaleString()
             });
         };
@@ -152,11 +158,12 @@ export class CommandHistory {
      * @param level 日志级别
      * @param message 日志消息
      */
-    public writeLog(type: LogTypeEnum, message: string): void {
+    public writeLog(type: LogTypeEnum, message: string, scope: string): void {
         const log: ILogRecord = {
             type,
             message,
-            timestamp: new Date().toLocaleString()
+            timestamp: new Date().toLocaleString(),
+            scope
         };
         this._logList.push(log);
     }

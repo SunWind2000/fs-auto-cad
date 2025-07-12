@@ -1,8 +1,13 @@
 import { isFunction, isAsyncFunction, AppLogger, Signal } from "@fs/shared";
 import { Command, ICommandCtor } from "./command";
-import { CommandHistory } from "./command_history";
-import { LogTypeEnum, LogLevelEnum, ILogRecord } from "./types";
+import { TransactionManager } from "./transaction_manager";
+import { LogTypeEnum, LogLevelEnum } from "./types";
 
+/**
+ * @description 命令管理器，用于管理命令的注册、执行和撤销重做。
+ * 
+ * 单例模式，通过 `CommandManager.getInstance()` 获取实例
+ */
 export class CommandManager {
     private static _instance: CommandManager | null = null;
     public static getInstance(): CommandManager {
@@ -16,7 +21,7 @@ export class CommandManager {
     private _commands: Map<string, ICommandCtor> = new Map();
     private _current: Command | null = null;
 
-    private _history: CommandHistory = new CommandHistory({ stackLimit: 50 });
+    private _history: TransactionManager = new TransactionManager({ stackLimit: 50 });
 
     /** 命令开始事件 */
     public signalCmdStarted: Signal<Command> = new Signal();
@@ -40,17 +45,10 @@ export class CommandManager {
     }
 
     /**
-     * 是否可以撤销
+     * 命令事务管理器
      */
-    public get canUndo(): boolean {
-        return this._history.canUndo;
-    }
-
-    /**
-     * 是否可以重做
-     */
-    public get canRedo(): boolean {
-        return this._history.canRedo;
+    public get history(): TransactionManager {
+        return this._history;
     }
 
     /**
@@ -177,15 +175,8 @@ export class CommandManager {
      * @param level 日志级别
      * @param message 日志消息
      */
-    public writeLog(level: LogTypeEnum, message: string): void {
-        this._history.writeLog(level, message);
-    }
-
-    /**
-     * 获取日志
-     */
-    public readLog(): ILogRecord[] {
-        return this._history.logList;
+    public writeLog(level: LogTypeEnum, message: string, scope = "GLOBAL"): void {
+        this._history.writeLog(level, message, scope);
     }
 
     /**
@@ -193,20 +184,6 @@ export class CommandManager {
      */
     public setLogLevel(level: LogLevelEnum): void {
         this._history.setLogLevel(level);
-    }
-
-    /**
-     * 撤销上一个命令
-     */
-    public undo(): void {
-        this._history.undo();
-    }
-
-    /**
-     * 重做上一个撤销的命令
-     */
-    public redo(): void {
-        this._history.redo();
     }
 
     /**

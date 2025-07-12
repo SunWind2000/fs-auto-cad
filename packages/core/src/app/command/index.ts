@@ -5,5 +5,5 @@
 export * from "./command";
 export * from "./manager";
 export * from "./types";
-export * from "./command_history";
+export * from "./transaction_manager";
 export * from "./utils";

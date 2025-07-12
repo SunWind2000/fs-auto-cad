@@ -48,21 +48,13 @@ export abstract class Command implements ICommand {
         return false;
     }
 
-    public onCleanup() {
-        AppLogger.log(this.name, `Command is being cleaned up.`);
-    };
+    public onCleanup() {};
 
-    public onComplete() {
-        AppLogger.log(this.name, `Command completed.`);
-    }
+    public onComplete() {}
 
-    public onCancel() {
-        AppLogger.log(this.name, `Command cancelled.`);
-    };
+    public onCancel() {};
 
-    public onUndo(): void | Promise<void> {
-        AppLogger.log(this.name, `Command undoing.`);
-    }
+    public onInverse(): void | Promise<void> {}
 
     public commit() {
         if (!this._mgr) {

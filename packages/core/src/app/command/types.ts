@@ -14,8 +14,8 @@ export interface ICommand {
   onComplete?: () => void;
   /** 生命周期方法：命令取消时 */
   onCancel?: () => void;
-  /** 撤销本次命令 */
-  onUndo: () => void;
+  /** 生命周期方法：回溯本次命令 */
+  onInverse: () => void;
   /** 结束一个命令 */
   commit: (data: any) => void;
   /** 取消一个命令 */
@@ -54,6 +54,8 @@ export type ILogRecord = {
   type: LogTypeEnum;
   /** 日志消息 */
   message: string;
+  /** 日志作用域 */
+  scope: string;
   /** 时间戳 */
   timestamp: string;
 }

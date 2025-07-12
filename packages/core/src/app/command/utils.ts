@@ -1,12 +1,12 @@
+import { ICommandCtor } from "./command";
 import { CommandManager } from "./manager";
 
 /**
  * 装饰器方法，注册一个命令
  */
 export function registerCmd(name: string) {
-    return function (target: any) {
-        const commandCtor = target.constructor;
-        CommandManager.getInstance().register(name, commandCtor);
+    return function (target: ICommandCtor) {
+        CommandManager.getInstance().register(name, target);
     };
 }
 
