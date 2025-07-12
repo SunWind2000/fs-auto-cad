@@ -4,8 +4,6 @@
 export interface ICommand {
   /** 命令名称 */
   name: string;
-  /** 是否是自动结束命令（同步） */
-  autoComplete?: boolean;
   /** 生命周期方法：命令运行时 */
   onExecute: () => void;
   /** 生命周期方法：收到消息时 */

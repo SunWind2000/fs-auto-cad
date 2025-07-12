@@ -5,16 +5,46 @@ import { ILogRecord, LogLevel } from "./types";
 
 export type ICmdLogFormatter = (name: string, args: unknown[]) => string;
 
+export type ICmdHistoryOptions = {
+    /** 撤销重做栈的最大次数限制 */
+    stackLimit?: number;
+    /** 
+     * 命令执行日志格式化函数
+     * @param name 命令名称
+     * @param args 命令参数
+     * @return 格式化后的日志消息
+     */
+    logFormatter?: ICmdLogFormatter;
+    /**
+     * 撤销命令日志格式化函数
+     * @param name 命令名称
+     * @param args 命令参数
+     * @return 格式化后的日志消息
+     */
+    undoLogFormatter?: ICmdLogFormatter;
+    /**
+     * 重做命令日志格式化函数
+     * @param name 命令名称
+     * @param args 命令参数
+     * @return 格式化后的日志消息
+     */
+    redoLogFormatter?: ICmdLogFormatter;
+}
+
 export class CommandHistory {
     private _logList: ILogRecord[] = [];
     private _undoStack: Stack<Command>;
     private _redoStack: Stack<Command>;
     private _logFormatter: ICmdLogFormatter;
+    private _undoLogFormatter: ICmdLogFormatter;
+    private _redoLogFormatter: ICmdLogFormatter;
 
-    constructor(historyLimit: number = 100, logFormatter?: ICmdLogFormatter) {
-        this._undoStack = new Stack<Command>(historyLimit);
-        this._redoStack = new Stack<Command>(historyLimit);
-        this._logFormatter = logFormatter || ((name, args) => `Executed command: ${name} with args: ${JSON.stringify(args)}`);
+    constructor(options: ICmdHistoryOptions = {}) {
+        this._undoStack = new Stack<Command>(options.stackLimit ?? 100);
+        this._redoStack = new Stack<Command>(options.stackLimit ?? 100);
+        this._logFormatter = options.logFormatter || ((name, args) => `Executed command: <${name}> with args: ${JSON.stringify(args)}`);
+        this._undoLogFormatter = options.undoLogFormatter || ((name, args) => `Undone command: <${name}> with args: ${JSON.stringify(args)}`);
+        this._redoLogFormatter = options.redoLogFormatter || ((name, args) => `Redone command: <${name}> with args: ${JSON.stringify(args)}`);
     }
 
     /** 获取日志列表 */
@@ -66,7 +96,7 @@ export class CommandHistory {
             this._redoStack.push(cmd);
             this._logList.push({
                 level: LogLevel.INFO,
-                message: `Undone command: ${cmd.name} with args: ${JSON.stringify(cmd.args)}`,
+                message: this._undoLogFormatter(cmd.name, cmd.args),
                 timestamp: new Date().toLocaleString()
             });
         };
@@ -98,7 +128,7 @@ export class CommandHistory {
             this._undoStack.push(cmd);
             this._logList.push({
                 level: LogLevel.INFO,
-                message: `Redone command: ${cmd.name} with args: ${JSON.stringify(cmd.args)}`,
+                message: this._redoLogFormatter(cmd.name, cmd.args),
                 timestamp: new Date().toLocaleString()
             });
         };
@@ -110,16 +140,6 @@ export class CommandHistory {
         } else {
             cmd.onExecute(...cmd.args);
             onExecuteRedoDone();
-        }
-    }
-
-    /**
-     * 写入日志
-     * @param level 日志级别
-                level: LogLevel.INFO,
-                message: `Redone command: ${cmd.name} with args: ${JSON.stringify(cmd.args)}`,
-                timestamp: new Date().toLocaleString()
-            });
         }
     }
 

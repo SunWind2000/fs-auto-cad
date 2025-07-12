@@ -1,7 +1,7 @@
 import { isFunction, isAsyncFunction, AppLogger, Signal } from "@fs/shared";
 import { Command, ICommandCtor } from "./command";
 import { CommandHistory } from "./command_history";
-import { LogLevel } from "./types";
+import { LogLevel, ILogRecord } from "./types";
 
 export class CommandManager {
     private static _instance: CommandManager | null = null;
@@ -16,7 +16,7 @@ export class CommandManager {
     private _commands: Map<string, ICommandCtor> = new Map();
     private _current: Command | null = null;
 
-    private _history: CommandHistory = new CommandHistory(100);
+    private _history: CommandHistory = new CommandHistory({ stackLimit: 50 });
 
     /** 命令开始事件 */
     public signalCmdStarted: Signal<Command> = new Signal();
@@ -67,6 +67,14 @@ export class CommandManager {
     }
 
     /**
+     * 检查是否注册了一个命令
+     * @param name 命令名称
+     */
+    public hasRegistered(name: string): boolean {
+        return this._commands.has(name);
+    }
+
+    /**
      * 执行一个命令
      * @param name 命令名称
      * @param args 命令参数
@@ -81,7 +89,7 @@ export class CommandManager {
             return;
         }
 
-        const cmd = new commandCtor();
+        const cmd = new commandCtor(this, name);
 
         // 设置当前命令
         this._current = cmd;
@@ -142,7 +150,7 @@ export class CommandManager {
      * @param actionType 
      */
     public terminate(cmd: Command, actionType: "commit" | "cancel") {
-        if (this._current !== cmd) {
+        if (this._current?.name !== cmd.name) {
             AppLogger.error(`CommandManager`, `Command ${cmd.name} is not the current command.`);
         }
 
@@ -171,6 +179,13 @@ export class CommandManager {
      */
     public writeLog(level: LogLevel, message: string): void {
         this._history.writeLog(level, message);
+    }
+
+    /**
+     * 获取日志
+     */
+    public readLog(): ILogRecord[] {
+        return this._history.logList;
     }
 
     /**

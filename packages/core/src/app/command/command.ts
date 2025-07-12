@@ -66,7 +66,9 @@ export abstract class Command implements ICommand {
 
     public commit() {
         if (!this._mgr) {
-            AppLogger.error(`Command ${this.name}`, `Command is created not properly.`);
+            AppLogger.warn(`Command ${this.name}`, `Command has been committed`);
+
+            return;
         }
 
         this._mgr!.terminate(this, "commit");
@@ -75,7 +77,9 @@ export abstract class Command implements ICommand {
 
     public cancel() {
         if (!this._mgr) {
-            AppLogger.error(`Command ${this.name}`, `Command is created not properly.`);
+            AppLogger.error(`Command ${this.name}`, `Command has been cancelled`);
+
+            return; 
         }
 
         this._mgr!.terminate(this, "cancel");

@@ -15,7 +15,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "lib": "vite build"
+    "lib": "vite build",
+    "test": "vitest run"
   },
   "devDependencies": {
     "@fs/shared": "workspace:*"
